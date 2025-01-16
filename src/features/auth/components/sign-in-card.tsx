@@ -15,10 +15,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().trim().email(),
-  password: z.string(),
+  password: z.string().min(1, "Required"),
 });
 export const SignInCard = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -29,7 +30,9 @@ export const SignInCard = () => {
     },
   });
 
-  //   const onSubmit = (values:z.infer<typeof formSchema>)
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log({ values });
+  };
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
       <CardHeader className="flex items-center justify-center text-center p-7">
@@ -40,7 +43,7 @@ export const SignInCard = () => {
       </div>
       <CardContent className="p-7">
         <Form {...form}>
-          <form className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               name="email"
               control={form.control}
@@ -57,17 +60,23 @@ export const SignInCard = () => {
                 </FormItem>
               )}
             />
-
-            <Input
-              required
-              type="password"
-              value={""}
-              onChange={() => {}}
-              placeholder="Enter password"
-              disabled={false}
-              min={8}
-              max={256}
+            <FormField
+              name="password"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Enter password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
+
             <Button disabled={false} size="lg" className="w-full">
               Login
             </Button>
@@ -96,6 +105,17 @@ export const SignInCard = () => {
           <FaGithub className="mr-2 size-5" />
           Login with Github
         </Button>
+      </CardContent>
+      <div className="px-7">
+        <DottedSeparator />
+      </div>
+      <CardContent className="p-7 flex items-center justify-center">
+        <p>
+          Don&apos;t have an Account?
+          <Link href="/sign-up">
+            <span className="text-blue-700">&nbsp;Sign Up</span>
+          </Link>
+        </p>
       </CardContent>
     </Card>
   );
